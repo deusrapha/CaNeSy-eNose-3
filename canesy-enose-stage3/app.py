@@ -4,16 +4,20 @@ import numpy as np
 import onnxruntime as ort
 import pandas as pd
 from scipy.stats import entropy
+from pathlib import Path
 
 # Streamlit App Configuration
 st.set_page_config(page_title="CaNeSy-eNose Dashboard", layout="wide", initial_sidebar_state="expanded")
 
 # Initialize ONNX Model
+
 @st.cache_resource
 def load_model():
-    ONNX_PATH = "mtl_velocity_model.onnx"
+    BASE_DIR = Path(__file__).resolve().parent
+    ONNX_PATH = BASE_DIR / "mtl_velocity_model.onnx"
+
     try:
-        return ort.InferenceSession(ONNX_PATH, providers=['CPUExecutionProvider'])
+        return ort.InferenceSession(str(ONNX_PATH), providers=['CPUExecutionProvider'])
     except Exception as e:
         st.error(f"Error loading ONNX model. Please ensure '{ONNX_PATH}' is in the repository. Details: {e}")
         return None
