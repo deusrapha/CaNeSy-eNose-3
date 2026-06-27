@@ -8,6 +8,7 @@ from pathlib import Path
 import sqlite3
 import plotly.graph_objects as go
 import os
+import textwrap
 
 # Streamlit App Configuration
 st.set_page_config(page_title="CaNeSy-eNose Dashboard", layout="wide", initial_sidebar_state="expanded")
@@ -645,7 +646,7 @@ with tab_cockpit:
             </div>
         </div>
         """
-        st.markdown(banner_html, unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(banner_html), unsafe_allow_html=True)
 
     # 2. KPI Cards Bar
     class_colors = {
@@ -686,7 +687,7 @@ with tab_cockpit:
         </div>
     </div>
     """
-    st.markdown(kpis_html, unsafe_allow_html=True)
+    st.markdown(textwrap.dedent(kpis_html), unsafe_allow_html=True)
 
     # 3. Main Dashboard Layout (Split Column Layout)
     col_chart, col_status = st.columns([8, 4])
@@ -785,7 +786,7 @@ with tab_cockpit:
             </div>
         </div>
         """
-        st.markdown(heatmap_html, unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(heatmap_html), unsafe_allow_html=True)
         
         # B. Edge Action Banner Overlay
         action_badge_classes = {
@@ -810,7 +811,7 @@ with tab_cockpit:
             </div>
         </div>
         """
-        st.markdown(action_html, unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(action_html), unsafe_allow_html=True)
         
         # C. Learning & Adaptation Status Card
         learning_badge_classes = {
@@ -892,7 +893,7 @@ with tab_cockpit:
             </div>
         </div>
         """
-        st.markdown(adaptation_html, unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(adaptation_html), unsafe_allow_html=True)
 
 # =========================================================================
 # PERFORMANCE ANALYSIS VIEW
@@ -992,7 +993,7 @@ with tab_analysis:
         col_summary, col_breakdown = st.columns([1, 1])
         
         with col_summary:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
             <div class="glass-card" style="display:flex; flex-direction:column; gap:1.25rem; height: 100%;">
                 <div class="card-header">
                     <h2>Model Performance Summary</h2>
@@ -1033,7 +1034,7 @@ with tab_analysis:
                     The model shows high robustness under normal conditions. As wind velocity increases above 3.0 m/s, turbulence causes sensor signal dispersion, resulting in a moderate spike in carbon monoxide MAE. Drift is effectively compensated by the velocity embedding layers.
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
         with col_breakdown:
             # Build bar breakdown
@@ -1081,7 +1082,7 @@ with tab_analysis:
                 </div>
             </div>
             """
-            st.markdown(breakdown_html, unsafe_allow_html=True)
+            st.markdown(textwrap.dedent(breakdown_html), unsafe_allow_html=True)
 
 # =========================================================================
 # DATABASE HISTORY LOGS VIEW
@@ -1269,7 +1270,7 @@ with tab_settings:
         </tr>
     </table>
     """
-    st.markdown(specs_html, unsafe_allow_html=True)
+    st.markdown(textwrap.dedent(specs_html), unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------- RE-RUN SCHEDULER -----------------
