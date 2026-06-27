@@ -206,7 +206,7 @@ def generate_sensor_stream():
         elif learning_status == "Model Updated":
             agent_action = "Model Updated & Re-deployed"
             explain_source = "Agentic Controller (Stage 3)"
-            explain_reason = "Model update finalized; baseline calibration optimized."
+            explain_reason = "Baseline calibration optimized for dynamic environmental conditions."
 
         # Predictions for background/trace helper gases
         temp_drift = (temp - 24.5) * 0.02
