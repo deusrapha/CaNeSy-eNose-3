@@ -382,8 +382,8 @@ with st.sidebar:
     st.markdown("**Core Runtime:** ONNX CPU Engine")
 
 # Main Title and Tab Split
-st.markdown('<h1 style="font-family:\'Outfit\'; margin-bottom: 5px;">🧠 CaNeSy-eNose System Cockpit</h1>', unsafe_allow_html=True)
-st.markdown('<p style="color:#64748b; font-size:0.9rem; margin-top:0px; margin-bottom:1.5rem;">Unified multi-stage robotic olfaction diagnostic control cockpit</p>', unsafe_allow_html=True)
+st.markdown('<h1 style="font-family:\'Outfit\'; margin-bottom: 5px;">🧠 CaNeSy-eNose System Control Center</h1>', unsafe_allow_html=True)
+st.markdown('<p style="color:#64748b; font-size:0.9rem; margin-top:0px; margin-bottom:1.5rem;">Unified multi-stage robotic olfaction diagnostic control center</p>', unsafe_allow_html=True)
 
 # ----------------- SIMULATION STEP CALCULATIONS -----------------
 # We run one simulation step per rerun if simulation is active
@@ -617,12 +617,12 @@ else:
     explain_reason = "Simulation is paused"
 
 # ----------------- TABS ROUTING -----------------
-tab_cockpit, tab_analysis, tab_history, tab_settings = st.tabs(["🚀 Cockpit", "📊 Analysis", "📜 History Logs", "⚙️ Settings"])
+tab_control, tab_analysis, tab_history, tab_settings = st.tabs(["🚀 Control Center", "📊 Analysis", "📜 History Logs", "⚙️ Settings"])
 
 # =========================================================================
-# COCKPIT VIEW
+# CONTROL CENTER VIEW
 # =========================================================================
-with tab_cockpit:
+with tab_control:
     # 1. Toxic Override Warning Alert Banner
     if (actual_co > 0.5 or actual_eth > 0.5) or (learning_status != "Normal Operation"):
         banner_html = f"""<div class="toxic-alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;">

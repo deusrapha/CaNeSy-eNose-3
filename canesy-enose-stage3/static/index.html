@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CaNeSy-eNose Cockpit Dashboard</title>
+    <title>CaNeSy-eNose Control Center Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -671,7 +671,7 @@
         <ul class="menu-list">
             <li class="menu-item active" onclick="switchView('cockpit', this)">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
-                Cockpit
+                Control Center
             </li>
             <li class="menu-item" onclick="switchView('analysis', this)">
                 <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -698,7 +698,7 @@
         <!-- Dashboard Header -->
         <header class="dashboard-header">
             <div class="dashboard-title-group">
-                <h1 id="view-title">System Cockpit</h1>
+                <h1 id="view-title">System Control Center</h1>
                 <p id="view-subtitle">Real-time edge prediction telemetry and sensor stream monitoring</p>
             </div>
             <div class="status-badge">
@@ -1251,7 +1251,7 @@
 
         // ─── Tabs Switch View ────────────────────────────────────────────────
         const viewTitles = {
-            'cockpit': { title: 'System Cockpit', subtitle: 'Real-time edge prediction telemetry and sensor stream monitoring' },
+            'cockpit': { title: 'System Control Center', subtitle: 'Real-time edge prediction telemetry and sensor stream monitoring' },
             'analysis': { title: 'Performance Analysis', subtitle: 'Detailed diagnostics and statistical validation metrics' },
             'history': { title: 'Telemetry History Logs', subtitle: 'Query and review historical SQLite telemetry database records' },
             'settings': { title: 'Control Panel', subtitle: 'Configure edge simulator settings and model references' }
