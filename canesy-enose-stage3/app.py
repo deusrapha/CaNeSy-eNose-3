@@ -624,29 +624,26 @@ tab_cockpit, tab_analysis, tab_history, tab_settings = st.tabs(["🚀 Cockpit", 
 # =========================================================================
 with tab_cockpit:
     # 1. Toxic Override Warning Alert Banner
-    if (actual_co > 0.5 or actual_eth > 0.5) or (learning_status != "Normal Operation"):
-        banner_html = f"""
-        <div class="toxic-alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
-                <span style="font-size: 1rem; font-weight: 700; letter-spacing: 0.5px;">⚠️ TOXIC GAS CONCENTRATION DETECTED! INITIATING GRADIENT ASCENT OVERRIDE</span>
-            </div>
-            <div style="display: flex; gap: 2.5rem; width: 100%; padding-top: 0.75rem; border-top: 1px solid rgba(244, 63, 94, 0.25); font-size: 0.8rem; font-weight: 500; color: rgba(248, 250, 252, 0.95); flex-wrap: wrap;">
-                <div>
-                    <span style="color: rgba(248, 250, 252, 0.55); display: block; font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Decision Source</span>
-                    <span>{explain_source}</span>
-                </div>
-                <div>
-                    <span style="color: rgba(248, 250, 252, 0.55); display: block; font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Confidence</span>
-                    <span>{explain_confidence:.1f}%</span>
-                </div>
-                <div>
-                    <span style="color: rgba(248, 250, 252, 0.55); display: block; font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Reason / Causal Attribution</span>
-                    <span>{explain_reason}</span>
-                </div>
-            </div>
-        </div>
-        """
-        st.markdown(textwrap.dedent(banner_html), unsafe_allow_html=True)
+        banner_html = f"""<div class="toxic-alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;">
+<div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+<span style="font-size: 1rem; font-weight: 700; letter-spacing: 0.5px;">⚠️ TOXIC GAS CONCENTRATION DETECTED! INITIATING GRADIENT ASCENT OVERRIDE</span>
+</div>
+<div style="display: flex; gap: 2.5rem; width: 100%; padding-top: 0.75rem; border-top: 1px solid rgba(244, 63, 94, 0.25); font-size: 0.8rem; font-weight: 500; color: rgba(248, 250, 252, 0.95); flex-wrap: wrap;">
+<div>
+<span style="color: rgba(248, 250, 252, 0.55); display: block; font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Decision Source</span>
+<span>{explain_source}</span>
+</div>
+<div>
+<span style="color: rgba(248, 250, 252, 0.55); display: block; font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Confidence</span>
+<span>{explain_confidence:.1f}%</span>
+</div>
+<div>
+<span style="color: rgba(248, 250, 252, 0.55); display: block; font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Reason / Causal Attribution</span>
+<span>{explain_reason}</span>
+</div>
+</div>
+</div>"""
+        st.markdown(banner_html, unsafe_allow_html=True)
 
     # 2. KPI Cards Bar
     class_colors = {
@@ -659,35 +656,33 @@ with tab_cockpit:
     }
     class_color = class_colors.get(predicted_state, '#10b981')
     
-    kpis_html = f"""
-    <div class="kpi-grid">
-        <div class="kpi-card temp">
-            <div class="kpi-title">Ambient Temp</div>
-            <div class="kpi-value">{temp:.1f}<span class="kpi-suffix">°C</span></div>
-        </div>
-        <div class="kpi-card humidity">
-            <div class="kpi-title">RH Humidity</div>
-            <div class="kpi-value">{humidity:.1f}<span class="kpi-suffix">%</span></div>
-        </div>
-        <div class="kpi-card wind">
-            <div class="kpi-title">Wind Velocity</div>
-            <div class="kpi-value">{velocity:.2f}<span class="kpi-suffix">m/s</span></div>
-        </div>
-        <div class="kpi-card latency">
-            <div class="kpi-title">Inference Latency</div>
-            <div class="kpi-value">{latency_ms:.1f}<span class="kpi-suffix">ms</span></div>
-        </div>
-        <div class="kpi-card uncertainty">
-            <div class="kpi-title">Uncertainty (Entropy)</div>
-            <div class="kpi-value">{uncertainty_score:.3f}</div>
-        </div>
-        <div class="kpi-card class">
-            <div class="kpi-title">Gas Classification</div>
-            <div class="kpi-value" style="font-size: 1.4rem; color: {class_color};">{predicted_state}</div>
-        </div>
-    </div>
-    """
-    st.markdown(textwrap.dedent(kpis_html), unsafe_allow_html=True)
+    kpis_html = f"""<div class="kpi-grid">
+<div class="kpi-card temp">
+<div class="kpi-title">Ambient Temp</div>
+<div class="kpi-value">{temp:.1f}<span class="kpi-suffix">°C</span></div>
+</div>
+<div class="kpi-card humidity">
+<div class="kpi-title">RH Humidity</div>
+<div class="kpi-value">{humidity:.1f}<span class="kpi-suffix">%</span></div>
+</div>
+<div class="kpi-card wind">
+<div class="kpi-title">Wind Velocity</div>
+<div class="kpi-value">{velocity:.2f}<span class="kpi-suffix">m/s</span></div>
+</div>
+<div class="kpi-card latency">
+<div class="kpi-title">Inference Latency</div>
+<div class="kpi-value">{latency_ms:.1f}<span class="kpi-suffix">ms</span></div>
+</div>
+<div class="kpi-card uncertainty">
+<div class="kpi-title">Uncertainty (Entropy)</div>
+<div class="kpi-value">{uncertainty_score:.3f}</div>
+</div>
+<div class="kpi-card class">
+<div class="kpi-title">Gas Classification</div>
+<div class="kpi-value" style="font-size: 1.4rem; color: {class_color};">{predicted_state}</div>
+</div>
+</div>"""
+    st.markdown(kpis_html, unsafe_allow_html=True)
 
     # 3. Main Dashboard Layout (Split Column Layout)
     col_chart, col_status = st.columns([8, 4])
@@ -775,18 +770,16 @@ with tab_cockpit:
             box_shadow = '0 0 10px rgba(244, 63, 94, 0.2)' if sensor_val > 4.5 else 'none'
             cells_html += f'<div class="heatmap-cell" style="background-color: {bg_color}; border-color: {border_color}; box-shadow: {box_shadow};">CH{i+1}<br><span style="font-weight:700; color:rgba(255,255,255,0.85);">{sensor_val:.2f}</span></div>'
             
-        heatmap_html = f"""
-        <div class="glass-card" style="margin-bottom:1rem;">
-            <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
-                <h2 style="font-size:1.05rem;">Sensor Array Live Heatmap</h2>
-            </div>
-            <p style="color:#64748b; font-size: 0.75rem; margin-bottom: 0.5rem; margin-top: 0px;">Real-time 16-channel micro-sensor magnitude</p>
-            <div class="heatmap-grid">
-                {cells_html}
-            </div>
-        </div>
-        """
-        st.markdown(textwrap.dedent(heatmap_html), unsafe_allow_html=True)
+        heatmap_html = f"""<div class="glass-card" style="margin-bottom:1rem;">
+<div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+<h2 style="font-size:1.05rem;">Sensor Array Live Heatmap</h2>
+</div>
+<p style="color:#64748b; font-size: 0.75rem; margin-bottom: 0.5rem; margin-top: 0px;">Real-time 16-channel micro-sensor magnitude</p>
+<div class="heatmap-grid">
+{cells_html}
+</div>
+</div>"""
+        st.markdown(heatmap_html, unsafe_allow_html=True)
         
         # B. Edge Action Banner Overlay
         action_badge_classes = {
@@ -800,18 +793,16 @@ with tab_cockpit:
         }
         action_class = action_badge_classes.get(agent_action, 'resample')
 
-        action_html = f"""
-        <div class="glass-card" style="margin-top:0px; margin-bottom:1rem; padding: 1.15rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                <span style="font-weight: 600; font-size: 0.85rem">Edge Controller Action:</span>
-                <span class="badge-status {action_class}">{agent_action}</span>
-            </div>
-            <div style="font-size: 0.72rem; color: #64748b; line-height: 1.4;">
-                * The agentic edge system performs automated overrides (gradient ascent sampling/escalation) based on real-time uncertainty margins.
-            </div>
-        </div>
-        """
-        st.markdown(textwrap.dedent(action_html), unsafe_allow_html=True)
+        action_html = f"""<div class="glass-card" style="margin-top:0px; margin-bottom:1rem; padding: 1.15rem;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+<span style="font-weight: 600; font-size: 0.85rem">Edge Controller Action:</span>
+<span class="badge-status {action_class}">{agent_action}</span>
+</div>
+<div style="font-size: 0.72rem; color: #64748b; line-height: 1.4;">
+* The agentic edge system performs automated overrides (gradient ascent sampling/escalation) based on real-time uncertainty margins.
+</div>
+</div>"""
+        st.markdown(action_html, unsafe_allow_html=True)
         
         # C. Learning & Adaptation Status Card
         learning_badge_classes = {
@@ -858,69 +849,53 @@ with tab_cockpit:
             mins = int(elapsed_seconds // 60)
             secs = int(elapsed_seconds % 60)
             calibration_age = f"{mins}m {secs}s ago"
-
-        adaptation_html = f"""
-        <div class="glass-card" style="margin-top:0px;">
-            <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
-                <h2 style="font-size:1.05rem;">Learning & Adaptation Status</h2>
-            </div>
-            <p style="color:#64748b; font-size: 0.75rem; margin-bottom: 0.75rem; margin-top:0px;">Active Learning, Human Oracle and Recalibration Cycles</p>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                <span style="font-weight: 600; font-size: 0.85rem">System Learning State:</span>
-                <span class="badge-status {learning_class}">{learning_text}</span>
-            </div>
-
-            {progress_bar_html}
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem;">
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.5rem; padding: 0.6rem; text-align: center;">
-                    <div style="font-size: 0.55rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Last Recalibration</div>
-                    <div style="font-size: 0.9rem; font-weight: 700; font-family: 'Outfit', sans-serif;">{calibration_age}</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.5rem; padding: 0.6rem; text-align: center;">
-                    <div style="font-size: 0.55rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">AL Events</div>
-                    <div style="font-size: 0.9rem; font-weight: 700; font-family: 'Outfit', sans-serif;">{active_learning_events}</div>
-                </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.7rem; color: #64748b; font-weight: 600;">
-                <span style="color: {oracle_color}; text-shadow: {oracle_shadow}; transition: all 0.3s ease;">🧑‍💻 Human Oracle</span>
-                <span style="opacity: 0.3;">➔</span>
-                <span style="color: {recal_color}; text-shadow: {recal_shadow}; transition: all 0.3s ease;">⚙️ Recalibration</span>
-                <span style="opacity: 0.3;">➔</span>
-                <span style="color: {update_color}; text-shadow: {update_shadow}; transition: all 0.3s ease;">🔄 Model Update</span>
-            </div>
-        </div>
-        """
-        st.markdown(textwrap.dedent(adaptation_html), unsafe_allow_html=True)
-
-# =========================================================================
-# PERFORMANCE ANALYSIS VIEW
-# =========================================================================
+        adaptation_html = f"""<div class="glass-card" style="margin-top:0px;">
+<div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+<h2 style="font-size:1.05rem;">Learning & Adaptation Status</h2>
+</div>
+<p style="color:#64748b; font-size: 0.75rem; margin-bottom: 0.75rem; margin-top:0px;">Active Learning, Human Oracle and Recalibration Cycles</p>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+<span style="font-weight: 600; font-size: 0.85rem">System Learning State:</span>
+<span class="badge-status {learning_class}">{learning_text}</span>
+</div>
+{progress_bar_html}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem;">
+<div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.5rem; padding: 0.6rem; text-align: center;">
+<div style="font-size: 0.55rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">Last Recalibration</div>
+<div style="font-size: 0.9rem; font-weight: 700; font-family: 'Outfit', sans-serif;">{calibration_age}</div>
+</div>
+<div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 0.5rem; padding: 0.6rem; text-align: center;">
+<div style="font-size: 0.55rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">AL Events</div>
+<div style="font-size: 0.9rem; font-weight: 700; font-family: 'Outfit', sans-serif;">{active_learning_events}</div>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.7rem; color: #64748b; font-weight: 600;">
+<span style="color: {oracle_color}; text-shadow: {oracle_shadow}; transition: all 0.3s ease;">🧑‍💻 Human Oracle</span>
+<span style="opacity: 0.3;">➔</span>
+<span style="color: {recal_color}; text-shadow: {recal_shadow}; transition: all 0.3s ease;">⚙️ Recalibration</span>
+<span style="opacity: 0.3;">➔</span>
+<span style="color: {update_color}; text-shadow: {update_shadow}; transition: all 0.3s ease;">🔄 Model Update</span>
+</div>
+</div>"""
+        st.markdown(adaptation_html, unsafe_allow_html=True)
 with tab_analysis:
-    # Query database to build aggregated analysis
     conn = sqlite3.connect(str(DATABASE_PATH))
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM telemetry_history ORDER BY id DESC LIMIT 500")
     rows = cursor.fetchall()
     conn.close()
-
     if not rows:
         st.info("⚠️ No telemetry records found in the database. Please run the simulation loop for a few seconds to populate data.")
     else:
-        # Calculations for metrics
         errors_co = [abs(r["actual_co"] - r["predicted_co"]) for r in rows]
         errors_eth = [abs(r["actual_eth"] - r["predicted_eth"]) for r in rows]
         errors_nitro = [abs(r["actual_nitro"] - r["predicted_nitro"]) for r in rows]
         errors_ammonia = [abs(r["actual_ammonia"] - r["predicted_ammonia"]) for r in rows]
-        
         mae_co = np.mean(errors_co)
         mae_eth = np.mean(errors_eth)
         mae_nitro = np.mean(errors_nitro)
         mae_ammonia = np.mean(errors_ammonia)
-        
         correct_class = 0
         for r in rows:
             act_co = r["actual_co"]
@@ -933,20 +908,14 @@ with tab_analysis:
                 expected = "Pure Ethylene"
             else:
                 expected = "Air"
-                
             if r["predicted_state"] == expected:
                 correct_class += 1
-                
         accuracy = (correct_class / len(rows)) * 100
-        
-        # Breakdown lists
         vel_bands = {"low": [], "mid": [], "high": []}
         temp_bands = {"low": [], "mid": [], "high": []}
         hum_bands = {"low": [], "mid": [], "high": []}
-        
         for r in rows:
             err = (abs(r["actual_co"] - r["predicted_co"]) + abs(r["actual_eth"] - r["predicted_eth"])) / 2.0
-            
             v = r["velocity"]
             if v < 2.0:
                 vel_bands["low"].append(err)
@@ -954,7 +923,6 @@ with tab_analysis:
                 vel_bands["mid"].append(err)
             else:
                 vel_bands["high"].append(err)
-                
             t_val = r["temp"]
             if t_val < 23.0:
                 temp_bands["low"].append(err)
@@ -962,7 +930,6 @@ with tab_analysis:
                 temp_bands["mid"].append(err)
             else:
                 temp_bands["high"].append(err)
-                
             h = r["humidity"]
             if h < 50.0:
                 hum_bands["low"].append(err)
@@ -970,7 +937,6 @@ with tab_analysis:
                 hum_bands["mid"].append(err)
             else:
                 hum_bands["high"].append(err)
-
         bands_data = {
             "velocity": {
                 "low": float(np.mean(vel_bands["low"])) if vel_bands["low"] else 0.0,
@@ -988,105 +954,82 @@ with tab_analysis:
                 "high": float(np.mean(hum_bands["high"])) if hum_bands["high"] else 0.0,
             }
         }
-
-        # Render layout splits
         col_summary, col_breakdown = st.columns([1, 1])
-        
         with col_summary:
-            st.markdown(textwrap.dedent(f"""
-            <div class="glass-card" style="display:flex; flex-direction:column; gap:1.25rem; height: 100%;">
-                <div class="card-header">
-                    <h2>Model Performance Summary</h2>
-                </div>
-                
-                <div style="display:flex; align-items:center; gap:1rem; background-color:rgba(56,189,248,0.04); padding:1.25rem; border-radius:0.75rem; border:1px solid rgba(56,189,248,0.1)">
-                    <div style="font-family:'Outfit', sans-serif; font-size:3rem; font-weight:800; color:#38bdf8; line-height:1;">{accuracy:.1f}%</div>
-                    <div style="font-size:0.85rem; font-weight:600; line-height:1.3;">
-                        Average Classification Accuracy<br>
-                        <span style="color:#64748b; font-size:0.75rem; font-weight:400;">(Rolling last {len(rows)} records)</span>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 style="font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem; margin-top:0px;">Mean Absolute Error (MAE)</h3>
-                    <div class="mae-badge-grid">
-                        <div class="mae-badge-card" style="border-left:3px solid #f43f5e">
-                            <span class="mae-badge-name">Carbon Monoxide (CO)</span>
-                            <span class="mae-badge-val">{mae_co:.4f}</span>
-                        </div>
-                        <div class="mae-badge-card" style="border-left:3px solid #38bdf8">
-                            <span class="mae-badge-name">Ethylene (C2H4)</span>
-                            <span class="mae-badge-val">{mae_eth:.4f}</span>
-                        </div>
-                        <div class="mae-badge-card" style="border-left:3px solid #a855f7">
-                            <span class="mae-badge-name">Nitrogen (N2)</span>
-                            <span class="mae-badge-val">{mae_nitro:.4f}</span>
-                        </div>
-                        <div class="mae-badge-card" style="border-left:3px solid #eab308">
-                            <span class="mae-badge-name">Ammonia (NH3)</span>
-                            <span class="mae-badge-val">{mae_ammonia:.4f}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background-color:rgba(255,255,255,0.02); padding:1rem; border-radius:0.75rem; font-size:0.78rem; line-height:1.5; border:1px solid rgba(255, 255, 255, 0.08); margin-top: 0.5rem;">
-                    <span style="color:#10b981; font-weight:600; display:block; margin-bottom:0.25rem;">🧑‍🔬 Model Performance Analysis:</span>
-                    The model shows high robustness under normal conditions. As wind velocity increases above 3.0 m/s, turbulence causes sensor signal dispersion, resulting in a moderate spike in carbon monoxide MAE. Drift is effectively compensated by the velocity embedding layers.
-                </div>
-            </div>
-            """), unsafe_allow_html=True)
-            
+            st.markdown(f"""<div class="glass-card" style="display:flex; flex-direction:column; gap:1.25rem; height: 100%;">
+<div class="card-header">
+<h2>Model Performance Summary</h2>
+</div>
+<div style="display:flex; align-items:center; gap:1rem; background-color:rgba(56,189,248,0.04); padding:1.25rem; border-radius:0.75rem; border:1px solid rgba(56,189,248,0.1)">
+<div style="font-family:'Outfit', sans-serif; font-size:3rem; font-weight:800; color:#38bdf8; line-height:1;">{accuracy:.1f}%</div>
+<div style="font-size:0.85rem; font-weight:600; line-height:1.3;">
+Average Classification Accuracy<br>
+<span style="color:#64748b; font-size:0.75rem; font-weight:400;">(Rolling last {len(rows)} records)</span>
+</div>
+</div>
+<div>
+<h3 style="font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem; margin-top:0px;">Mean Absolute Error (MAE)</h3>
+<div class="mae-badge-grid">
+<div class="mae-badge-card" style="border-left:3px solid #f43f5e">
+<span class="mae-badge-name">Carbon Monoxide (CO)</span>
+<span class="mae-badge-val">{mae_co:.4f}</span>
+</div>
+<div class="mae-badge-card" style="border-left:3px solid #38bdf8">
+<span class="mae-badge-name">Ethylene (C2H4)</span>
+<span class="mae-badge-val">{mae_eth:.4f}</span>
+</div>
+<div class="mae-badge-card" style="border-left:3px solid #a855f7">
+<span class="mae-badge-name">Nitrogen (N2)</span>
+<span class="mae-badge-val">{mae_nitro:.4f}</span>
+</div>
+<div class="mae-badge-card" style="border-left:3px solid #eab308">
+<span class="mae-badge-name">Ammonia (NH3)</span>
+<span class="mae-badge-val">{mae_ammonia:.4f}</span>
+</div>
+</div>
+</div>
+<div style="background-color:rgba(255,255,255,0.02); padding:1rem; border-radius:0.75rem; font-size:0.78rem; line-height:1.5; border:1px solid rgba(255, 255, 255, 0.08); margin-top: 0.5rem;">
+<span style="color:#10b981; font-weight:600; display:block; margin-bottom:0.25rem;">🧑‍🔬 Model Performance Analysis:</span>
+The model shows high robustness under normal conditions. As wind velocity increases above 3.0 m/s, turbulence causes sensor signal dispersion, resulting in a moderate spike in carbon monoxide MAE. Drift is effectively compensated by the velocity embedding layers.
+</div>
+</div>""", unsafe_allow_html=True)
         with col_breakdown:
-            # Build bar breakdown
             all_vals = [
                 bands_data["velocity"]["low"], bands_data["velocity"]["mid"], bands_data["velocity"]["high"],
                 bands_data["temp"]["low"], bands_data["temp"]["mid"], bands_data["temp"]["high"],
                 bands_data["humidity"]["low"], bands_data["humidity"]["mid"], bands_data["humidity"]["high"]
             ]
             max_val = max(all_vals) if max(all_vals) > 0 else 0.05
-            
             def get_bar_row(label, val):
                 pct = (val / max_val) * 100
-                return f"""
-                <div class="bar-row">
-                    <div class="bar-label-row"><span>{label}</span><span>{val:.4f}</span></div>
-                    <div class="bar-bg"><div class="bar-fill" style="width: {pct}%;"></div></div>
-                </div>
-                """
-                
-            breakdown_html = f"""
-            <div class="glass-card" style="height: 100%;">
-                <div class="card-header">
-                    <h2>Environmental Quality Breakdown (Average MAE)</h2>
-                </div>
-                
-                <h3 style="font-size:0.8rem; font-weight:700; color:#64748b; margin-bottom:0.5rem; margin-top:0px;">Wind Speed Impact</h3>
-                <div class="bar-chart-container" style="margin-bottom:1.5rem;">
-                    {get_bar_row("Low Wind (< 2.0 m/s)", bands_data["velocity"]["low"])}
-                    {get_bar_row("Moderate Wind (2.0 - 3.0 m/s)", bands_data["velocity"]["mid"])}
-                    {get_bar_row("High Wind (> 3.0 m/s)", bands_data["velocity"]["high"])}
-                </div>
-
-                <h3 style="font-size:0.8rem; font-weight:700; color:#64748b; margin-bottom:0.5rem; margin-top:0px;">Temperature Range Impact</h3>
-                <div class="bar-chart-container" style="margin-bottom:1.5rem;">
-                    {get_bar_row("Cool (< 23°C)", bands_data["temp"]["low"])}
-                    {get_bar_row("Moderate (23 - 26°C)", bands_data["temp"]["mid"])}
-                    {get_bar_row("Warm (> 26°C)", bands_data["temp"]["high"])}
-                </div>
-
-                <h3 style="font-size:0.8rem; font-weight:700; color:#64748b; margin-bottom:0.5rem; margin-top:0px;">Relative Humidity Impact</h3>
-                <div class="bar-chart-container">
-                    {get_bar_row("Dry (< 50%)", bands_data["humidity"]["low"])}
-                    {get_bar_row("Moderate (50 - 65%)", bands_data["humidity"]["mid"])}
-                    {get_bar_row("Humid (> 65%)", bands_data["humidity"]["high"])}
-                </div>
-            </div>
-            """
-            st.markdown(textwrap.dedent(breakdown_html), unsafe_allow_html=True)
-
-# =========================================================================
-# DATABASE HISTORY LOGS VIEW
-# =========================================================================
+                return f"""<div class="bar-row">
+<div class="bar-label-row"><span>{label}</span><span>{val:.4f}</span></div>
+<div class="bar-bg"><div class="bar-fill" style="width: {pct}%;"></div></div>
+</div>"""
+            breakdown_html = f"""<div class="glass-card" style="height: 100%;">
+<div class="card-header">
+<h2>Environmental Quality Breakdown (Average MAE)</h2>
+</div>
+<h3 style="font-size:0.8rem; font-weight:700; color:#64748b; margin-bottom:0.5rem; margin-top:0px;">Wind Speed Impact</h3>
+<div class="bar-chart-container" style="margin-bottom:1.5rem;">
+{get_bar_row("Low Wind (< 2.0 m/s)", bands_data["velocity"]["low"])}
+{get_bar_row("Moderate Wind (2.0 - 3.0 m/s)", bands_data["velocity"]["mid"])}
+{get_bar_row("High Wind (> 3.0 m/s)", bands_data["velocity"]["high"])}
+</div>
+<h3 style="font-size:0.8rem; font-weight:700; color:#64748b; margin-bottom:0.5rem; margin-top:0px;">Temperature Range Impact</h3>
+<div class="bar-chart-container" style="margin-bottom:1.5rem;">
+{get_bar_row("Cool (< 23°C)", bands_data["temp"]["low"])}
+{get_bar_row("Moderate (23 - 26°C)", bands_data["temp"]["mid"])}
+{get_bar_row("Warm (> 26°C)", bands_data["temp"]["high"])}
+</div>
+<h3 style="font-size:0.8rem; font-weight:700; color:#64748b; margin-bottom:0.5rem; margin-top:0px;">Relative Humidity Impact</h3>
+<div class="bar-chart-container">
+{get_bar_row("Dry (< 50%)", bands_data["humidity"]["low"])}
+{get_bar_row("Moderate (50 - 65%)", bands_data["humidity"]["mid"])}
+{get_bar_row("Humid (> 65%)", bands_data["humidity"]["high"])}
+</div>
+</div>"""
+            st.markdown(breakdown_html, unsafe_allow_html=True)
 with tab_history:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown('### SQLite Database Query Logs')
@@ -1246,31 +1189,29 @@ with tab_settings:
             
     st.markdown("---")
     st.markdown('#### System Edge Node Technical Specifications')
-    specs_html = f"""
-    <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse; margin-top: 0.5rem; color:#f8fafc;">
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
-            <td style="color:#64748b; font-weight:500;">Active Model:</td>
-            <td style="font-family:monospace; font-weight:600;">{ONNX_PATH.name}</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
-            <td style="color:#64748b; font-weight:500;">Model Path:</td>
-            <td style="font-family:monospace;">{str(ONNX_PATH)}</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
-            <td style="color:#64748b; font-weight:500;">Database Path:</td>
-            <td style="font-family:monospace;">{str(DATABASE_PATH)}</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
-            <td style="color:#64748b; font-weight:500;">Deployment Mode:</td>
-            <td>Multi-stage Edge-Simulation System (ONNX CPU)</td>
-        </tr>
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
-            <td style="color:#64748b; font-weight:500;">Local Logging Level:</td>
-            <td>SQLite Telemetry Logging Enabled (~1Hz rate)</td>
-        </tr>
-    </table>
-    """
-    st.markdown(textwrap.dedent(specs_html), unsafe_allow_html=True)
+    specs_html = f"""<table style="width: 100%; font-size: 0.85rem; border-collapse: collapse; margin-top: 0.5rem; color:#f8fafc;">
+<tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
+<td style="color:#64748b; font-weight:500;">Active Model:</td>
+<td style="font-family:monospace; font-weight:600;">{ONNX_PATH.name}</td>
+</tr>
+<tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
+<td style="color:#64748b; font-weight:500;">Model Path:</td>
+<td style="font-family:monospace;">{str(ONNX_PATH)}</td>
+</tr>
+<tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
+<td style="color:#64748b; font-weight:500;">Database Path:</td>
+<td style="font-family:monospace;">{str(DATABASE_PATH)}</td>
+</tr>
+<tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
+<td style="color:#64748b; font-weight:500;">Deployment Mode:</td>
+<td>Multi-stage Edge-Simulation System (ONNX CPU)</td>
+</tr>
+<tr style="border-bottom: 1px solid rgba(255,255,255,0.08); height:35px;">
+<td style="color:#64748b; font-weight:500;">Local Logging Level:</td>
+<td>SQLite Telemetry Logging Enabled (~1Hz rate)</td>
+</tr>
+</table>"""
+    st.markdown(specs_html, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------- RE-RUN SCHEDULER -----------------
