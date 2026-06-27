@@ -624,6 +624,7 @@ tab_cockpit, tab_analysis, tab_history, tab_settings = st.tabs(["🚀 Cockpit", 
 # =========================================================================
 with tab_cockpit:
     # 1. Toxic Override Warning Alert Banner
+    if (actual_co > 0.5 or actual_eth > 0.5) or (learning_status != "Normal Operation"):
         banner_html = f"""<div class="toxic-alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem;">
 <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
 <span style="font-size: 1rem; font-weight: 700; letter-spacing: 0.5px;">⚠️ TOXIC GAS CONCENTRATION DETECTED! INITIATING GRADIENT ASCENT OVERRIDE</span>
