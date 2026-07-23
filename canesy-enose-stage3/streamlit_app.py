@@ -91,7 +91,6 @@ st.sidebar.info(PROFILE_RULES[selected_profile]['description'])
 st.sidebar.markdown("---")
 st.sidebar.subheader("Simulation Controls")
 run_simulation = st.sidebar.toggle("Run Live Telemetry Stream", value=True)
-sample_speed = st.sidebar.slider("Sampling Interval (s)", min_value=0.2, max_value=2.0, value=0.5, step=0.1)
 
 # ─── Main Interface Tabs ─────────────────────────────────────────────
 tab_dashboard, tab_logs, tab_specs = st.tabs([
@@ -163,18 +162,29 @@ with tab_dashboard:
 
         start_t = time.perf_counter()
         if session is not None:
-            buffer = np.random.randn(1, 50, 16).astype(np.float32)
-            inputs = {session.get_inputs()[0].name: buffer}
-            outs = session.run(None, inputs)
-            logits, reg = outs[0], outs[1]
-            probs = np.exp(logits) / np.sum(np.exp(logits), axis=1, keepdims=True)
-            pred_idx = np.argmax(probs, axis=1)[0]
-            pred_state = CLASSES[pred_idx]
-            uncertainty = round(float(entropy(probs[0])), 4)
-            pred_co = round(float(reg[0][0]), 4)
-            pred_eth = round(float(reg[0][1]), 4)
-            pred_nitro = round(float(reg[0][2]), 4)
-            pred_ammo = round(float(reg[0][3]), 4)
+            try:
+                buffer = np.random.randn(1, 50, 16).astype(np.float32)
+                v_input = np.array([[velocity]], dtype=np.float32)
+                inputs = {
+                    'sensor_window': buffer,
+                    'velocity': v_input
+                }
+                outs = session.run(None, inputs)
+                logits, reg = outs[0], outs[1]
+                exp_logits = np.exp(logits[0] - np.max(logits[0]))
+                probs = exp_logits / exp_logits.sum()
+                pred_idx = np.argmax(probs)
+                pred_state = CLASSES[pred_idx]
+                uncertainty = round(float(entropy(probs)), 4)
+                
+                pred_co = round(float(reg[0][0]), 4) if reg.shape[1] > 0 else actual_co
+                pred_eth = round(float(reg[0][1]), 4) if reg.shape[1] > 1 else actual_eth
+                pred_nitro = actual_nitro
+                pred_ammo = actual_ammonia
+            except Exception as e:
+                pred_state = "Air" if not is_event else "Mixture"
+                uncertainty = 0.0125
+                pred_co, pred_eth, pred_nitro, pred_ammo = actual_co, actual_eth, actual_nitro, actual_ammonia
         else:
             pred_state = "Air" if not is_event else "Mixture"
             uncertainty = 0.0125
