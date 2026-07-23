@@ -1531,42 +1531,35 @@
         }
 
         function startSimulation() {
+            isSimulationRunning = true;
+            updateSimulationButtonUI();
+            if (connectionStatus) {
+                connectionStatus.textContent = '🟢 Connected to Edge AI (Live Telemetry Stream)';
+            }
+            if (statusDot) {
+                statusDot.className = 'status-dot connected';
+            }
             fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'start' })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    isSimulationRunning = true;
-                    updateSimulationButtonUI();
-                    connectSSE();
-                }
-            })
-            .catch(err => console.error('Error starting simulation:', err));
+            }).catch(err => {});
         }
 
         function stopSimulation() {
+            isSimulationRunning = false;
+            updateSimulationButtonUI();
+            if (connectionStatus) {
+                connectionStatus.textContent = '⏸️ Simulation Stopped';
+            }
+            if (statusDot) {
+                statusDot.className = 'status-dot';
+            }
             fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'stop' })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    isSimulationRunning = false;
-                    updateSimulationButtonUI();
-                    if (eventSource) {
-                        eventSource.close();
-                        eventSource = null;
-                    }
-                    connectionStatus.textContent = '⏸️ Simulation Stopped';
-                    statusDot.className = 'status-dot';
-                }
-            })
-            .catch(err => console.error('Error stopping simulation:', err));
+            }).catch(err => {});
         }
 
         function toggleSimulation() {
@@ -1579,12 +1572,20 @@
 
         let fallbackTimer = null;
         let t_sim = 0;
-        let smooth_co = 0.02;
-        let smooth_eth = 0.01;
-        let smooth_ammo = 0.01;
-        let pred_co_state = 0.02;
-        let pred_eth_state = 0.01;
-        let pred_ammo_state = 0.01;
+        let smooth_co = 0.015;
+        let smooth_eth = 0.008;
+        let smooth_ammo = 0.008;
+        let pred_co_state = 0.015;
+        let pred_eth_state = 0.008;
+        let pred_ammo_state = 0.008;
+
+        // Stochastic Event Engine State
+        let event_active = false;
+        let event_ticks_remaining = 0;
+        let next_event_delay = 10;
+        let current_peak_co = 0.45;
+        let current_peak_eth = 0.35;
+        let current_peak_ammo = 0.25;
 
         function startFallbackSimulation() {
             if (fallbackTimer) return;
@@ -1599,50 +1600,84 @@
                 if (!isSimulationRunning) return;
 
                 t_sim++;
-                const is_event = (t_sim % 50) >= 18 && (t_sim % 50) < 38;
+
+                // Stochastic Gas Plume Event Lifecycle
+                if (event_active) {
+                    event_ticks_remaining--;
+                    if (event_ticks_remaining <= 0) {
+                        event_active = false;
+                        next_event_delay = Math.floor(20 + Math.random() * 40); // 10s to 20s recovery
+                    }
+                } else {
+                    next_event_delay--;
+                    if (next_event_delay <= 0) {
+                        event_active = true;
+                        event_ticks_remaining = Math.floor(25 + Math.random() * 35); // 12s to 18s duration
+                        // Random peak concentration per event
+                        current_peak_co = parseFloat((0.25 + Math.random() * 0.50).toFixed(3));
+                        current_peak_eth = parseFloat((0.15 + Math.random() * 0.45).toFixed(3));
+                        current_peak_ammo = parseFloat((0.10 + Math.random() * 0.35).toFixed(3));
+                    }
+                }
                 
                 const profile = profileSelect ? profileSelect.value : 'Home Safety';
-                let target_co = 0.015, target_eth = 0.008, target_ammo = 0.008, target_nitro = 78.08;
+                let target_co = 0.012, target_eth = 0.006, target_ammo = 0.006, target_nitro = 78.08;
                 
-                if (is_event) {
+                if (event_active) {
+                    // Atmospheric wind turbulence (multi-frequency plume fluctuations)
+                    const plume_swirl = Math.sin(t_sim * 0.25) * 0.15 + Math.cos(t_sim * 0.4) * 0.1;
                     if (profile === 'Home Safety') {
-                        target_co = 0.45; target_eth = 0.04; target_ammo = 0.02;
+                        target_co = Math.max(0.02, current_peak_co + plume_swirl * 0.1);
+                        target_eth = 0.03 + Math.random() * 0.02;
+                        target_ammo = 0.015;
                     } else if (profile === 'Industrial Safety') {
-                        target_co = 0.65; target_eth = 0.85; target_ammo = 0.45;
+                        target_co = Math.max(0.02, current_peak_co + plume_swirl * 0.15);
+                        target_eth = Math.max(0.02, current_peak_eth + plume_swirl * 0.2);
+                        target_ammo = Math.max(0.01, current_peak_ammo + plume_swirl * 0.1);
                     } else if (profile === 'Agricultural') {
-                        target_eth = 0.28; target_ammo = 0.38; target_co = 0.01;
+                        target_eth = Math.max(0.02, current_peak_eth + plume_swirl * 0.1);
+                        target_ammo = Math.max(0.02, current_peak_ammo + plume_swirl * 0.12);
+                        target_co = 0.01;
                     } else {
-                        target_co = 0.35; target_eth = 0.30; target_ammo = 0.08;
+                        target_co = Math.max(0.02, current_peak_co * 0.7 + plume_swirl * 0.08);
+                        target_eth = Math.max(0.02, current_peak_eth * 0.7 + plume_swirl * 0.08);
+                        target_ammo = 0.05;
                     }
                 }
 
-                // 1. Exponential Diffusion Physics (Sensor Rise/Decay curve)
-                const noise_co = (Math.random() - 0.5) * 0.006;
-                const noise_eth = (Math.random() - 0.5) * 0.004;
-                const noise_ammo = (Math.random() - 0.5) * 0.004;
+                // 1. Organic Non-linear Sensor Adsorption/Desorption Physics
+                const alpha_rise = 0.25;
+                const alpha_decay = 0.08;
+                const noise_co = (Math.random() - 0.5) * 0.008;
+                const noise_eth = (Math.random() - 0.5) * 0.006;
+                const noise_ammo = (Math.random() - 0.5) * 0.005;
 
-                smooth_co = Math.max(0.005, smooth_co * 0.80 + target_co * 0.20 + noise_co);
-                smooth_eth = Math.max(0.005, smooth_eth * 0.80 + target_eth * 0.20 + noise_eth);
-                smooth_ammo = Math.max(0.005, smooth_ammo * 0.83 + target_ammo * 0.17 + noise_ammo);
+                const k_co = target_co > smooth_co ? alpha_rise : alpha_decay;
+                const k_eth = target_eth > smooth_eth ? alpha_rise : alpha_decay;
+                const k_ammo = target_ammo > smooth_ammo ? alpha_rise : alpha_decay;
+
+                smooth_co = Math.max(0.005, smooth_co + (target_co - smooth_co) * k_co + noise_co);
+                smooth_eth = Math.max(0.005, smooth_eth + (target_eth - smooth_eth) * k_eth + noise_eth);
+                smooth_ammo = Math.max(0.005, smooth_ammo + (target_ammo - smooth_ammo) * k_ammo + noise_ammo);
 
                 const co_val = parseFloat(smooth_co.toFixed(3));
                 const eth_val = parseFloat(smooth_eth.toFixed(3));
                 const ammo_val = parseFloat(smooth_ammo.toFixed(3));
                 const nitro_val = parseFloat((78.08 + Math.sin(t_sim * 0.05) * 0.02 + (Math.random() - 0.5) * 0.005).toFixed(3));
                 
-                const temp_val = parseFloat((24.5 + Math.sin(t_sim * 0.08) * 1.2).toFixed(1));
-                const hum_val = parseFloat((58.2 + Math.cos(t_sim * 0.08) * 2.5).toFixed(1));
-                const press_val = parseFloat((1013.25 + Math.sin(t_sim * 0.04) * 1.5).toFixed(1));
-                const vel_val = parseFloat((2.5 + Math.sin(t_sim * 0.07) * 0.4).toFixed(2));
+                const temp_val = parseFloat((24.5 + Math.sin(t_sim * 0.06) * 1.4 + (Math.random() - 0.5) * 0.1).toFixed(1));
+                const hum_val = parseFloat((58.2 + Math.cos(t_sim * 0.06) * 2.8 + (Math.random() - 0.5) * 0.2).toFixed(1));
+                const press_val = parseFloat((1013.25 + Math.sin(t_sim * 0.03) * 1.8).toFixed(1));
+                const vel_val = parseFloat((2.5 + Math.sin(t_sim * 0.08) * 0.45 + (Math.random() - 0.5) * 0.08).toFixed(2));
 
-                // 2. Vanguard Model Prediction Tracking Lag & Neural Regression Variance
-                const pred_noise_co = (Math.random() - 0.5) * 0.012;
-                const pred_noise_eth = (Math.random() - 0.5) * 0.010;
-                const pred_noise_ammo = (Math.random() - 0.5) * 0.008;
+                // 2. Neural Model Prediction Lag & Regression Variance
+                const pred_noise_co = (Math.random() - 0.5) * 0.015;
+                const pred_noise_eth = (Math.random() - 0.5) * 0.012;
+                const pred_noise_ammo = (Math.random() - 0.5) * 0.009;
 
-                pred_co_state = pred_co_state * 0.75 + co_val * 0.25 + pred_noise_co;
-                pred_eth_state = pred_eth_state * 0.75 + eth_val * 0.25 + pred_noise_eth;
-                pred_ammo_state = pred_ammo_state * 0.78 + ammo_val * 0.22 + pred_noise_ammo;
+                pred_co_state = pred_co_state * 0.70 + co_val * 0.30 + pred_noise_co;
+                pred_eth_state = pred_eth_state * 0.70 + eth_val * 0.30 + pred_noise_eth;
+                pred_ammo_state = pred_ammo_state * 0.72 + ammo_val * 0.28 + pred_noise_ammo;
 
                 const pred_co_val = parseFloat(Math.max(0.002, pred_co_state).toFixed(3));
                 const pred_eth_val = parseFloat(Math.max(0.002, pred_eth_state).toFixed(3));
@@ -1690,7 +1725,7 @@
                     predicted_ammonia: pred_ammo_val,
                     latency_ms: parseFloat((0.85 + Math.random() * 0.35).toFixed(2)),
                     uncertainty_score: parseFloat((0.012 + Math.abs(co_val - pred_co_val) * 0.1 + Math.random() * 0.01).toFixed(4)),
-                    predicted_state: is_event ? (co_val > 0.3 ? "Pure CO" : (eth_val > 0.2 ? "Pure Ethylene" : "Mixture")) : "Air",
+                    predicted_state: event_active ? (co_val > 0.3 ? "Pure CO" : (eth_val > 0.2 ? "Pure Ethylene" : "Mixture")) : "Air",
                     agent_action: hazard_lvl.includes("Safe") ? "Monitoring" : "Actuation Override",
                     hazard_level: hazard_lvl,
                     sensors: sensor_array,
