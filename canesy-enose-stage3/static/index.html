@@ -1635,6 +1635,13 @@
                     green_led = 0; yellow_led = 1;
                 }
 
+                const sensor_array = [];
+                for (let i = 0; i < 16; i++) {
+                    const base_v = 0.5 + Math.sin(t_sim * 0.1 + i * 0.4) * 0.3;
+                    const event_v = is_event ? (co_val * 4.5 + Math.random() * 0.3) : 0;
+                    sensor_array.push(parseFloat(Math.min(5.0, Math.max(0.05, base_v + event_v)).toFixed(2)));
+                }
+
                 const mock_data = {
                     timestamp: Math.floor(Date.now() / 1000),
                     profile: profile,
@@ -1643,25 +1650,28 @@
                     pressure: press_val,
                     velocity: vel_val,
                     actual_co: co_val,
-                    predicted_co: parseFloat((co_val + (Math.random() - 0.5) * 0.005).toFixed(3)),
+                    predicted_co: parseFloat(Math.max(0.001, co_val * 0.94 + 0.015 + Math.sin(t_sim * 0.15) * 0.012).toFixed(3)),
                     actual_eth: eth_val,
-                    predicted_eth: parseFloat((eth_val + (Math.random() - 0.5) * 0.005).toFixed(3)),
+                    predicted_eth: parseFloat(Math.max(0.001, eth_val * 0.92 + 0.010 + Math.cos(t_sim * 0.12) * 0.008).toFixed(3)),
                     actual_nitro: nitro_val,
-                    predicted_nitro: nitro_val,
+                    predicted_nitro: parseFloat((nitro_val + Math.sin(t_sim * 0.05) * 0.02).toFixed(3)),
                     actual_ammonia: ammo_val,
-                    predicted_ammonia: parseFloat((ammo_val + (Math.random() - 0.5) * 0.005).toFixed(3)),
+                    predicted_ammonia: parseFloat(Math.max(0.001, ammo_val * 0.95 + 0.008 + Math.sin(t_sim * 0.1) * 0.006).toFixed(3)),
                     latency_ms: parseFloat((0.8 + Math.random() * 0.4).toFixed(2)),
                     uncertainty_score: parseFloat((0.01 + Math.random() * 0.02).toFixed(4)),
-                    predicted_state: is_event ? (co_val > 0.3 ? "Pure CO" : "Mixture") : "Air",
+                    predicted_state: is_event ? (co_val > 0.3 ? "Pure CO" : (eth_val > 0.2 ? "Pure Ethylene" : "Mixture")) : "Air",
                     agent_action: hazard_lvl.includes("Safe") ? "Monitoring" : "Actuation Override",
                     hazard_level: hazard_lvl,
-                    green_led: green_led,
-                    yellow_led: yellow_led,
-                    red_led: red_led,
-                    blue_led: 0,
-                    buzzer: buzzer,
-                    vent_relay: vent,
-                    shutdown_relay: shutdown
+                    sensors: sensor_array,
+                    gpio: {
+                        green: green_led,
+                        yellow: yellow_led,
+                        red: red_led,
+                        blue: 0,
+                        buzzer: buzzer,
+                        vent: vent,
+                        shutdown: shutdown
+                    }
                 };
 
                 handleSSEMessage({ data: JSON.stringify(mock_data) });
