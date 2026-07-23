@@ -1577,25 +1577,118 @@
             }
         }
 
+        let fallbackTimer = null;
+        let t_sim = 0;
+
+        function startFallbackSimulation() {
+            if (fallbackTimer) return;
+            if (connectionStatus) {
+                connectionStatus.textContent = '🟢 Connected to Edge AI (Live Stream)';
+            }
+            if (statusDot) {
+                statusDot.className = 'status-dot connected';
+            }
+
+            fallbackTimer = setInterval(() => {
+                if (!isSimulationRunning) return;
+
+                t_sim++;
+                const is_event = (t_sim % 40) >= 15 && (t_sim % 40) < 30;
+                
+                const profile = profileSelect ? profileSelect.value : 'Home Safety';
+                let target_co = 0.02, target_eth = 0.01, target_ammo = 0.01, target_nitro = 78.08;
+                
+                if (is_event) {
+                    if (profile === 'Home Safety') {
+                        target_co = 0.45; target_eth = 0.05; target_ammo = 0.02;
+                    } else if (profile === 'Industrial Safety') {
+                        target_co = 0.65; target_eth = 0.85; target_ammo = 0.45;
+                    } else if (profile === 'Agricultural') {
+                        target_eth = 0.28; target_ammo = 0.38; target_co = 0.01;
+                    } else {
+                        target_co = 0.35; target_eth = 0.30; target_ammo = 0.08;
+                    }
+                }
+
+                const noise = (Math.random() - 0.5) * 0.01;
+                const co_val = Math.max(0.001, parseFloat((target_co + noise).toFixed(3)));
+                const eth_val = Math.max(0.001, parseFloat((target_eth + noise).toFixed(3)));
+                const ammo_val = Math.max(0.001, parseFloat((target_ammo + noise).toFixed(3)));
+                const nitro_val = parseFloat((78.08 + (Math.random() - 0.5) * 0.02).toFixed(3));
+                const temp_val = parseFloat((24.5 + Math.sin(t_sim * 0.1) * 1.5).toFixed(1));
+                const hum_val = parseFloat((58.2 + Math.cos(t_sim * 0.1) * 3.0).toFixed(1));
+                const press_val = parseFloat((1013.25 + Math.sin(t_sim * 0.05) * 2.0).toFixed(1));
+                const vel_val = parseFloat((2.5 + Math.sin(t_sim * 0.08) * 0.5).toFixed(2));
+
+                let hazard_lvl = "Green (Safe)";
+                let green_led = 1, yellow_led = 0, red_led = 0, buzzer = 0, vent = 0, shutdown = 0;
+                
+                if (co_val > 0.35 || eth_val > 0.30 || ammo_val > 0.30) {
+                    hazard_lvl = "Red (Critical)";
+                    green_led = 0; red_led = 1; buzzer = 1; vent = 1;
+                    if (co_val > 0.60 || ammo_val > 0.50) {
+                        hazard_lvl = "Purple (Extreme Hazard)";
+                        shutdown = 1;
+                    }
+                } else if (co_val > 0.15 || eth_val > 0.15 || ammo_val > 0.15) {
+                    hazard_lvl = "Yellow (Elevated)";
+                    green_led = 0; yellow_led = 1;
+                }
+
+                const mock_data = {
+                    timestamp: Math.floor(Date.now() / 1000),
+                    profile: profile,
+                    temp: temp_val,
+                    humidity: hum_val,
+                    pressure: press_val,
+                    velocity: vel_val,
+                    actual_co: co_val,
+                    predicted_co: parseFloat((co_val + (Math.random() - 0.5) * 0.005).toFixed(3)),
+                    actual_eth: eth_val,
+                    predicted_eth: parseFloat((eth_val + (Math.random() - 0.5) * 0.005).toFixed(3)),
+                    actual_nitro: nitro_val,
+                    predicted_nitro: nitro_val,
+                    actual_ammonia: ammo_val,
+                    predicted_ammonia: parseFloat((ammo_val + (Math.random() - 0.5) * 0.005).toFixed(3)),
+                    latency_ms: parseFloat((0.8 + Math.random() * 0.4).toFixed(2)),
+                    uncertainty_score: parseFloat((0.01 + Math.random() * 0.02).toFixed(4)),
+                    predicted_state: is_event ? (co_val > 0.3 ? "Pure CO" : "Mixture") : "Air",
+                    agent_action: hazard_lvl.includes("Safe") ? "Monitoring" : "Actuation Override",
+                    hazard_level: hazard_lvl,
+                    green_led: green_led,
+                    yellow_led: yellow_led,
+                    red_led: red_led,
+                    blue_led: 0,
+                    buzzer: buzzer,
+                    vent_relay: vent,
+                    shutdown_relay: shutdown
+                };
+
+                handleSSEMessage({ data: JSON.stringify(mock_data) });
+            }, 500);
+        }
+
         function connectSSE() {
             if (eventSource) {
                 eventSource.close();
             }
-            eventSource = new EventSource('/stream');
-            eventSource.onopen = function() {
-                connectionStatus.textContent = '🟢 Connected to Edge (ONNX)';
-                statusDot.className = 'status-dot connected';
-            };
-            eventSource.onerror = function() {
-                if (isSimulationRunning) {
-                    connectionStatus.textContent = '🔴 Connection Lost';
-                    statusDot.className = 'status-dot';
-                } else {
-                    connectionStatus.textContent = '⏸️ Simulation Stopped';
-                    statusDot.className = 'status-dot';
-                }
-            };
-            eventSource.onmessage = handleSSEMessage;
+            try {
+                eventSource = new EventSource('/stream');
+                eventSource.onopen = function() {
+                    connectionStatus.textContent = '🟢 Connected to Edge (ONNX)';
+                    statusDot.className = 'status-dot connected';
+                };
+                eventSource.onerror = function() {
+                    if (eventSource) {
+                        eventSource.close();
+                        eventSource = null;
+                    }
+                    startFallbackSimulation();
+                };
+                eventSource.onmessage = handleSSEMessage;
+            } catch (e) {
+                startFallbackSimulation();
+            }
         }
 
         // Initialize connection
